@@ -1,0 +1,25 @@
+<!doctype html>
+<title>Photo Organizer</title>
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
+<h1>Photo Organizer</h1>
+<div class="page">
+<table>
+<tr>
+<td  valign="top">
+<ul class="metanav">
+  <li>Edit People</li>
+  <li>Edit Tags</li>
+  <li><a href="{{url_for('show_countries')}}">Edit Countries</a></li>
+  <li>Edit Cities<li>
+  <li>Edit Media Directories</li>
+</ul>
+</td>
+<td  valign="top">
+  {% for message in get_flashed_messages() %}
+    <div class="flash">{{ message }}</div>
+  {% endfor %}
+  {% block body %}{% endblock %}
+</td>
+</tr>
+</table>
+</div>

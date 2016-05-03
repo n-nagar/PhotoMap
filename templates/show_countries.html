@@ -1,0 +1,53 @@
+{% extends "layout.html" %}
+{% block body %}
+<script type="text/javascript">
+function update(entry)
+{
+	if (entry != null)
+	{
+		obj = document.evaluate("//div[@id='" + entry + "']/input", document.body, null, XPathResult.ANY_TYPE, null);
+		if (obj != null)
+		{
+			obj = obj.iterateNext();
+			if ((obj != null) && (obj.value != null))
+			{
+				txt = obj.value;
+				url = document.evaluate("string(//div[@id='" + entry + "']/@updateurl)", document.body, null, XPathResult.ANY_TYPE, null);
+				var xhr = new XMLHttpRequest();
+				xhr.open("PUT", url.stringValue, false);
+				xhr.setRequestHeader("Content-type", "application/json");
+				payload = {"name": txt}
+				xhr.send(JSON.stringify(payload));
+				if (xhr.status == 200)
+					obj.outerHTML = "<span class=\"country-name-col\" onclick=\"editMode('" + entry + "')\" id=\"name\">" + txt + "</span>"
+				alert(txt);
+			}
+		}
+		return;
+	}
+}
+
+function editMode(entry)
+{
+	if (entry != null)
+	{
+		obj = document.evaluate("//div[@id='" + entry + "']/span[@id='name']", document.body, null, XPathResult.ANY_TYPE, null);
+		if (obj != null)
+		{
+			obj = obj.iterateNext();
+			txt = obj.innerText;
+			obj.outerHTML = "<input onchange='update(\"" + entry + "\")' value=\"" + txt + "\"/>";
+		}
+		return;
+	}
+}
+</script>
+<div class="countries-table">
+	{% for cntry in entries %}
+	<div class="countries-row" id='{{cntry.country_code}}' updateurl="{{url_for('update_country', ccode=cntry.country_code)}}">
+		<span class="country-code-col" id="code">{{cntry.country_code}}</span>
+		<span class="country-name-col" onclick="editMode('{{cntry.country_code}}')" id="name">{{cntry.country}}</span>
+	</div>
+	{% endfor %}
+</div>
+{% endblock %}
